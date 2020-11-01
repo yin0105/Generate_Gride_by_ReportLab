@@ -61,10 +61,11 @@ def drawLine(canv, color, lineWidth, paperSize, gridSize, gutter, type, dotted=0
     elif type == 0:
         # minor
         xx = xStart    
-        svgIndex = 0  
+        xIndex = 0  
         if dotted == 1: canv.setDash(1, 2)  
         while xx < paperSize[0] - xStart - 0.01:
             yy = yStart
+            yIndex = 0
             while yy < paperSize[1] - yStart - 0.01:
                 xlist = []
                 ylist = []
@@ -73,20 +74,26 @@ def drawLine(canv, color, lineWidth, paperSize, gridSize, gutter, type, dotted=0
                     ylist.append(yy + gridSize / 2 * i)
                 canv.grid(xlist,ylist)
                 
-                if len(svg) > svgIndex:
-                    print(str(svgIndex) + " :: " + svg[svgIndex] + ".svg")
-                    drawing = svg2rlg(svg[svgIndex] + ".svg")
+                if len(svg) > yIndex and len(svg[yIndex]) > xIndex:
+                    # print(str(xIndex) + " :: " + svg[xIndex] + ".svg")
+                    drawing = svg2rlg(svg[yIndex][xIndex] + ".svg")
                     scaleXY = gridSize / max(drawing.width, drawing.height)
                     drawing.width = drawing.width * scaleXY
                     drawing.height = drawing.height * scaleXY
                     drawing.scale(scaleXY, scaleXY)
                     renderPDF.draw(drawing, canv, xx, yy) 
                 yy += gridSize
+                yIndex += 1
             if gutter > 0: xlist.append(xx + gridSize)
             xx += gridSize + gutter
-            svgIndex += 1
+            xIndex += 1
         return
         
     canv.grid(xlist,ylist)
-svg=['svg/1553857808', 'svg/0ff41', 'svg/1553687147']
+# svg=['svg/1553857808', 'svg/0ff41', 'svg/1553687147']
+svg=[
+['svg/1553857808', 'svg/0ff41', 'svg/1553687147'], # first row
+['svg/1553687147'], # second row
+['svg/1553857808', 'svg/0ff41'], # third row
+]
 generatePDF("temp", 33, A4, blue, 1, green, 0.3, 1, red, 3, gutter=10, svg=svg)
